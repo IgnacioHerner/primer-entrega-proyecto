@@ -5,6 +5,12 @@ const ProductRouter = Router()
 const product = new ProductManager();
 
 
+ProductRouter.get('/', async (req, res) => {
+    let allProducts = await product.getProducts()
+    res.render('home', {
+        products : allProducts
+    })
+})
 
 ProductRouter.get("/", async (require, response) =>{
     response.send(await product.getProducts())

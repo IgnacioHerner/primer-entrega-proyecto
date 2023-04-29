@@ -35,29 +35,37 @@ class CartManager {
         return cartById
     };
     addProductInCart = async (cartId, productId) => {
-        let cartById = await this.exist(cartId)
-        if(!cartById) return "Cart Not Found"
-        let productById = await productAll.exist(productId)
-        if(!productById) return "Product Not Found"
-        
-        let cartsAll = await this.readCarts()
-        let cartFilter = cartsAll.filter((cart) => cart.id != cartId)
-
-        if(cartById.products.some((product) => product.id === productId)){
-            let moreProductInCart = cartById.products.find((product) => product.id === productId)
-            moreProductInCart.cantidad++;
-            let cartsConcat = [cartById, ...cartFilter]
-            await this.writeCarts(cartsConcat)
-            return "Product added to cart"
+        try {
+            const cart = await this.exist(cartId);
+            if (!cart) {
+                return "Cart Not Found";
+            }
+    
+            const product = await productAll.exist(productId);
+            if (!product) {
+                return "Product Not Found";
+            }
+            
+            const carts = await this.readCarts();
+            const updatedCart = {
+                ...cart,
+                products: cart.products.some((product) => product.id === productId)
+                    ? cart.products.map((product) =>
+                          product.id === productId
+                              ? { ...product, cantidad: product.cantidad + 1 }
+                              : product
+                      )
+                    : [...cart.products, { id: product.id, cantidad: 1 }],
+            };
+            
+            await this.writeCarts([updatedCart, ...carts.filter((cart) => cart.id !== cartId)]);
+            return "Product added to cart";
+        } catch (error) {
+            console.error(error);
+            return "An error occurred while adding the product to the cart";
         }
-
-        cartById.products.push({id:productById.id, cantidad: 1})
-
-        let cartsConcated = [cartById, ...cartFilter]
-
-        await this.writeCarts(cartsConcated)
-        return "Product added to cart"
-    }
+    };
+    
 
 
 }
