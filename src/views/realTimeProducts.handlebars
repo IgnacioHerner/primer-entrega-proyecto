@@ -1,8 +1,32 @@
+
 <div>
-    <h1>Soy realtimeproducts</h1>
+    <h1>Real Time Products: </h1>
+
+  <h2>Agregar una nueva persona</h2>
+  <form method="POST" action="/realtimeproducts">
+      <label for="name">Nombre:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="lastname">Apellido:</label>
+      <input type="text" id="lastname" name="lastname" required>
+
+      <label for="age">Edad:</label>
+      <input type="number" id="age" name="age" required>
+
+      <button type="submit">Agregar</button>
+  </form>
+
+  {{#if products}}
+      <h2>Lista de personas:</h2>
+      <ul>
+          {{#each products}}
+              <li>{{name}} {{lastname}}, {{age}} años</li>
+          {{/each}}
+      </ul>
+  {{else}}
+      <p>No hay personas registradas aún</p>
+  {{/if}}
 </div>
-
-
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
